@@ -1,0 +1,6 @@
+[
+  {"num":0,"text":"本月","selected":true},
+  {"num":1,"text":"上个月"},
+  {"num":2,"text":"本年"},
+  {"num":3,"text":"去年"}
+]

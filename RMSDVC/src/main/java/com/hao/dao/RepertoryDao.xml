@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.RepertoryDao">
+    <insert id="addRepertory" parameterType="Repertory">
+insert repertory values(null,#{drugId},#{wareDate},#{saveNum},#{wareId},#{drugCode},#{allSave})
+    </insert>
+
+    <delete id="delRepertory" parameterType="list">
+        delete from repertory where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueRepertory" parameterType="int" resultMap="queDRes">
+    select * from repertory where id=#{id}
+    </select>
+    <update id="xiuRepertory" parameterType="Repertory">
+        update repertory
+        <set>
+            <if test="drugId>0">drugId=#{drugId},</if>
+            <if test="wareDate!=null">wareDate=#{wareDate},</if>
+            <if test="saveNum>0">saveNum=#{saveNum},</if>
+            <if test="wareId>0">wareId=#{wareId},</if>
+            <if test="drugCode!=null">drugCode=#{drugCode},</if>
+            <if test="allSave>0">allSave=#{allSave},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllRepertoryCount" parameterType="Repertory" resultType="int">
+        select count(*) from repertory rep
+        inner join drug on drug.id=rep.drugId
+        inner join warehouse wh on wh.id=rep.wareId
+        <where>
+            <if test="wareName!=null">and wh.wareName like CONCAT('%',#{wareName},'%')</if>
+            <if test="drugNames!=null">and drug.drugNames like CONCAT('%',#{drugNames},'%')</if>
+            <if test="wareDate!=null">and rep.wareDate >#{wareDate}</if>
+            <if test="drugCode!=null">and rep.drugCode like CONCAT('%',#{drugCode},'%')</if>
+        </where>
+    </select>
+
+    <select id="queAllRepertory" parameterType="Repertory" resultMap="queRes">
+        select rep.* from repertory rep
+        inner join drug on drug.id=rep.drugId
+        inner join warehouse wh on wh.id=rep.wareId
+        <where>
+            <if test="wareName!=null">and wh.wareName like CONCAT('%',#{wareName},'%')</if>
+            <if test="drugNames!=null">and drug.drugNames like CONCAT('%',#{drugNames},'%')</if>
+            <if test="wareDate!=null">and rep.wareDate >=#{wareDate}</if>
+            <if test="drugCode!=null">and rep.drugCode like CONCAT('%',#{drugCode},'%')</if>
+        </where>
+    </select>
+    <select id="byWareIdQueAllRep" parameterType="int" resultType="Repertory">
+        select * from repertory where wareId=#{id}
+    </select>
+    <resultMap id="queRes" type="com.hao.vo.Repertory">
+        <id column="drugId" property="drugId"></id>
+        <id column="wareId" property="wareId"></id>
+       <association property="drug" javaType="Drug"
+                    column="drugId" select="com.hao.dao.DrugDao.xiuBeforeQueDrug"
+                    fetchType="lazy">
+        </association>
+        <association property="wh" javaType="WareHouse"
+                    column="wareId" select="com.hao.dao.WareHouseDao.xiuBeforeQueWareHouse"
+                    fetchType="lazy">
+        </association>
+    </resultMap>
+    <resultMap id="queDRes" type="com.hao.vo.Repertory">
+    <id column="drugId" property="drugId"></id>
+    <association property="drug" javaType="Drug"
+                 column="drugId" select="com.hao.dao.DrugDao.xiuBeforeQueDrug"
+                 fetchType="lazy">
+    </association>
+    </resultMap>
+</mapper>

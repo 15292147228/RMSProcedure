@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.SupplierDao">
+    <insert id="addSupplier" parameterType="Supplier">
+insert supplier values(null,#{supName},#{location},#{suPhone},#{remark})
+    </insert>
+
+    <delete id="delSupplier" parameterType="list">
+        delete from supplier where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueSupplier" parameterType="int" resultType="Supplier">
+    select * from supplier where id=#{id}
+    </select>
+    <update id="xiuSupplier" parameterType="Supplier">
+        update supplier
+        <set>
+            <if test="supName!=null">supName=#{supName},</if>
+            <if test="location!=null">location=#{location},</if>
+            <if test="suPhone!=null">suPhone=#{suPhone},</if>
+            <if test="remark!=null">remark=#{remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllSupplierCount" parameterType="Supplier" resultType="int">
+        select count(*) from supplier
+        <where>
+            <if test="supName!=null">and supName like CONCAT('%',#{supName},'%')</if>
+            <if test="location!=null">and location  like CONCAT('%',#{location},'%')</if>
+            <if test="suPhone!=null">and suPhone  like CONCAT('%',#{suPhone},'%')</if>
+            <if test="remark!=null">and remark  like CONCAT('%',#{remark},'%')</if>
+        </where>
+    </select>
+
+    <select id="queAllSupplier" parameterType="Supplier" resultType="Supplier">
+        select * from supplier
+        <where>
+            <if test="supName!=null">and supName like CONCAT('%',#{supName},'%')</if>
+            <if test="location!=null">and location  like CONCAT('%',#{location},'%')</if>
+            <if test="suPhone!=null">and suPhone  like CONCAT('%',#{suPhone},'%')</if>
+            <if test="remark!=null">and remark  like CONCAT('%',#{remark},'%')</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.OfDetailDao">
+    <insert id="addOfDetail" parameterType="OfDetail">
+insert ofdetail values(null,#{reperId},#{count},#{amount},#{remark},#{oformId})
+    </insert>
+
+    <delete id="delOfDetail" parameterType="list">
+        delete from ofdetail where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueOfDetail" parameterType="int" resultType="OfDetail">
+    select * from ofdetail where id=#{id}
+    </select>
+
+    <select id="queryByRepIdOFD" parameterType="int" resultMap="queRD">
+    select * from ofdetail where oformId=#{id}
+    </select>
+    <update id="xiuOfDetail" parameterType="OfDetail">
+        update ofdetail
+        <set>
+            <if test="reperId>0">reperId=#{reperId},</if>
+            <if test="count>0">count=#{count},</if>
+            <if test="amount>0">amount=#{amount},</if>
+            <if test="remark!=null">remark=#{remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllOfDetailCount" parameterType="OfDetail" resultType="int">
+        select count(*) from ofdetail
+        <where>
+            <if test="oformId>0">oformId=#{oformId}</if>
+        </where>
+    </select>
+
+    <select id="queAllOfDetail" parameterType="OfDetail" resultMap="queRD">
+        select * from ofdetail
+    </select>
+
+    <resultMap id="queRD" type="OfDetail">
+        <id column="reperId" property="reperId"></id>
+        <association property="rep" javaType="Repertory"
+                     column="reperId" select="com.hao.dao.RepertoryDao.xiuBeforeQueRepertory"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+</mapper>

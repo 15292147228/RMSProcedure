@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.RoleDao">
+    <insert id="addRole" parameterType="Role">
+       insert role(rname,remark)values(#{rname},#{remark})
+    </insert>
+    
+    <delete id="delRole" parameterType="int">
+        delete from role where id=#{id}
+    </delete>
+    
+    <select id="xiuBeforeRole" parameterType="int" resultType="Role">
+        select * from role where id=#{id}
+    </select>
+    <update id="xiuRole" parameterType="Role">
+        update role set rname=#{rname},remark=#{remark} where id=#{id}
+    </update>
+
+    <select id="queByVoCount" resultType="int" parameterType="Role">
+        select count(*) from role
+        <where>
+            <if test="rname!=null">and rname like CONCAT('%',#{rname},'%')</if>
+            <if test="remark!=null">and remark like CONCAT('%',#{remark},'%')</if>
+        </where>
+    </select>
+
+    <select id="queByVoAll" resultType="Role" parameterType="Role">
+        select * from role
+        <where>
+        <if test="rname!=null">and rname like CONCAT('%',#{rname},'%')</if>
+            <if test="remark!=null">and remark like CONCAT('%',#{remark},'%')</if>
+        </where>
+    </select>
+
+    <select id="queAllRole" resultType="Role">
+        select * from role
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>
+		 <!--打开延迟加载的开关 默认false-->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<!-- 设置积极加载或消极加载 默认true-->
+		<setting name="aggressiveLazyLoading" value="false"/>
+		
+		<!-- 打开二级缓存-->
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+	<!-- 给包名+类名  取别名-->
+	<typeAliases>
+		<!--  指定对应类型 取个别名-->
+		<!--<typeAlias type="com.yu.vo.AddressInfo" alias="AddressInfo"></typeAlias>-->
+		<!--  批量指定别名-->
+		<package name="com.hao.vo"/>
+		
+	</typeAliases>
+
+	<!--  分页插件 拦截器自动帮忙limit-->
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			<!-- 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库-->
+			<property name="helperDialect" value="mysql"/>
+		</plugin>
+	</plugins>
+
+	<mappers>
+		<!--<mapper resource="com/yu/mapper/UserMap.xml"></mapper>
+		<mapper resource="com/yu/mapper/AddressMap.xml"></mapper>
+		<mapper resource="com/yu/mapper/StudentMap.xml"></mapper>
+		<mapper resource="com/yu/mapper/ClassMap.xml"></mapper>-->
+		<!--批量加载映射文件-->
+		<package name="com/hao/dao"/>
+	</mappers>
+
+</configuration>

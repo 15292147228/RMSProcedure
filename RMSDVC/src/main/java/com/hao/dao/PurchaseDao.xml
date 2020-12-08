@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.PurchaseDao">
+    <insert id="addPur" parameterType="Purchase"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert purchase values(null,#{aggregate},now(),#{state})
+    </insert>
+
+    <delete id="delPurchase" parameterType="list">
+        delete from purchase where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQuePurchase" parameterType="int" resultMap="queRD">
+    select * from purchase where id=#{id}
+    </select>
+    <update id="xiuPurchase" parameterType="Purchase">
+        update purchase
+        <set>
+            <if test="aggregate>0">aggregate=#{aggregate},</if>
+            <if test="buyDate!=null">buyDate=#{buyDate},</if>
+            <if test="state>=0">state=#{state}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllPurchaseCount" parameterType="Purchase" resultType="int">
+        select count(*) from purchase
+        <where>
+            <if test="buyDate!=null">buyDate>=#{buyDate}</if>
+            <if test="state>=0">and state=#{state}</if>
+        </where>
+    </select>
+
+    <select id="queAllPurchase" parameterType="Purchase" resultMap="queRD">
+        select * from purchase
+        <where>
+            <if test="buyDate!=null">buyDate>=#{buyDate}</if>
+            <if test="state>=0">and state=#{state}</if>
+        </where>
+    </select>
+
+    <resultMap id="queRD" type="Purchase">
+        <id column="id" property="id"></id>
+        <collection property="purDetail" javaType="list" ofType="PurchaseDetail"
+                    column="id" select="com.hao.dao.PurchaseDetailDao.queryByRepIdPD"
+                    fetchType="lazy">
+        </collection>
+        <!--<association property="sup" javaType="Supplier"
+                     column="supId" select="com.hao.dao.SupplierDao.xiuBeforeQueSupplier"
+                     fetchType="lazy">
+        </association>-->
+    </resultMap>
+</mapper>

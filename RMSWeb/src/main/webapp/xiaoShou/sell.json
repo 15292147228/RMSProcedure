@@ -1,0 +1,3 @@
+[
+  {"state":-1,"text":"全部"},{"state":0,"text":"待审查","selected":true},{"state":1,"text":"缺货"},{"state":2,"text":"出货"}
+]

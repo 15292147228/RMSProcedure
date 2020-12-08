@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.EmployeeDao">
+    <insert id="addEmp" parameterType="Employee">
+    insert employee values(null,#{accNum},#{pwd},#{empName},#{empSex},#{empBirthday},#{empImage},#{department},#{idCard},#{eduback},#{empPhone},#{roleId})
+    </insert>
+
+    <delete id="delEmp" parameterType="list">
+        delete from employee where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueEmp" parameterType="int" resultType="Employee">
+    select * from employee where id=#{id}
+    </select>
+    <update id="xiuEmp" parameterType="Employee">
+    update employee
+        <set>
+            <if test="accNum!=null">accNum=#{accNum},</if>
+            <if test="pwd!=null">pwd=#{pwd},</if>
+            <if test="empName!=null">empName=#{empName},</if>
+            <if test="empSex!=null">empSex=#{empSex},</if>
+            <if test="empBirthday!=null">empBirthday=#{empBirthday},</if>
+            <if test="empImage!=null">empImage=#{empImage},</if>
+            <if test="department!=null">department=#{department},</if>
+            <if test="idCard!=null">idCard=#{idCard},</if>
+            <if test="eduback!=null">eduback=#{eduback},</if>
+            <if test="empPhone!=null">empPhone=#{empPhone},</if>
+            <if test="roleId!=null">roleId=#{roleId}</if>
+        </set>
+    where id=#{id}
+    </update>
+
+    <select id="queAllEmpCount" parameterType="Employee" resultType="int">
+        select count(*) from employee
+        <where>
+            <if test="empName!=null">and empName like CONCAT('%',#{empName},'%')</if>
+            <if test="empSex!=null">and empSex  like CONCAT('%',#{empSex},'%')</if>
+            <if test="department!=null">and department  like CONCAT('%',#{department},'%')</if>
+            <if test="idCard!=null">and idCard  like CONCAT('%',#{idCard},'%')</if>
+            <if test="eduback!=null">and eduback  like CONCAT('%',#{eduback},'%')</if>
+            <if test="empPhone!=null">and empPhone  like CONCAT('%',#{empPhone},'%')</if>
+        </where>
+    </select>
+
+    <select id="queAllEmp" parameterType="Employee" resultType="Employee">
+    select * from employee
+    <where>
+        <if test="empName!=null">and empName like CONCAT('%',#{empName},'%')</if>
+        <if test="empSex!=null">and empSex  like CONCAT('%',#{empSex},'%')</if>
+        <if test="department!=null">and department  like CONCAT('%',#{department},'%')</if>
+        <if test="idCard!=null">and idCard  like CONCAT('%',#{idCard},'%')</if>
+        <if test="eduback!=null">and eduback  like CONCAT('%',#{eduback},'%')</if>
+        <if test="empPhone!=null">and empPhone  like CONCAT('%',#{empPhone},'%')</if>
+    </where>
+    </select>
+
+    <select id="empIsExist" resultType="int">
+    select count(*) from employee where accNum=#{acc}
+    </select>
+    <select id="queryAreEmp" resultMap="queRoley">
+    select * from employee where accNum=#{acc} and pwd=#{pwd}
+    </select>
+
+    <resultMap id="queRoley" type="Employee">
+        <id column="roleId" property="roleId"></id>
+    <association property="role" javaType="Role" column="roleId" fetchType="lazy" select="com.hao.dao.RoleDao.xiuBeforeRole">
+    </association>
+    </resultMap>
+</mapper>

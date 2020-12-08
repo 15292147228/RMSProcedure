@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.AuthorityDao">
+    <select id="queByIdAuthority" resultType="Authority" parameterType="int">
+    select au.id,au.text,au.url,au.iconCls,au.state,au.parentid from authority  au inner join andRole ar on au.id=ar.authId
+    inner join role rl on ar.roleId=rl.id inner join employee ep on ep.roleId=rl.id where ep.id=#{id}
+    </select>
+
+    <select id="queAllAuthority" resultType="Authority" parameterType="Authority">
+        select * from authority
+        <where>
+            <if test="menu.text!=null">and text like CONCAT('%',#{menu.text},'%')</if>
+            <if test="menu.url!=null"> and url like CONCAT('%',#{menu.url},'%')</if>
+            <if test="menu.iconCls!=null">and iconCls like CONCAT('%',#{menu.iconCls},'%')</if>
+        </where>
+    </select>
+
+    <select id="queCountAll" parameterType="Authority" resultType="int">
+        select count(*) from authority
+        <where>
+            <if test="menu.text!=null">and text like CONCAT('%',#{menu.text},'%')</if>
+            <if test="menu.url!=null"> and url like CONCAT('%',#{menu.url},'%')</if>
+            <if test="menu.iconCls!=null">and iconCls like CONCAT('%',#{menu.iconCls},'%')</if>
+        </where>
+    </select>
+
+    <insert id="addAuthority" parameterType="Authority">
+        insert authority (text,url,iconCls,state,parentid) values(#{text},#{url},#{iconCls},#{state},#{parentid});
+    </insert>
+
+    <delete id="delAuthority" parameterType="list">
+        delete from authority where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQue" parameterType="int" resultType="Authority">
+        select * from authority where id=#{id}
+    </select>
+
+    <update id="xiuAuthority" parameterType="Authority">
+        update authority
+        <set>
+            <if test="text!=null">text=#{text},</if>
+            <if test="url!=null">url=#{url},</if>
+            <if test="iconCls!=null">iconCls=#{iconCls},</if>
+            <if test="state!=null">state=#{state},</if>
+            <if test="parentid>0">parentid=#{parentid}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <select id="queByRidAuth" resultType="Authority" parameterType="int">
+    select au.id,au.text,au.url,au.iconCls,au.state,au.parentid from authority  au inner join andRole ar on au.id=ar.authId
+    inner join role rl on ar.roleId=rl.id where rl.id=#{rid}
+    </select>
+
+    <select id="queryRidAuthor" resultType="Authority" parameterType="int">
+    select * from authority where parentid=#{id}
+    </select>
+
+    <select id="queAER" resultType="Authority" parameterType="int">
+        SELECT DISTINCT m.* FROM authority m
+			LEFT JOIN andRole p
+			ON m.id =p.authId
+			WHERE m.parentid =#{id}
+			AND p.roleId
+            IN( SELECT  ur.roleId  FROM  employee  ur WHERE ur.id =#{eId} )
+    </select>
+
+</mapper>

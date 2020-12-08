@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.SDrugDao">
+    <insert id="addSDrug" parameterType="SDrug">
+    insert sdrug values(null,#{supId},#{drugId},#{num},#{combPrice})
+    </insert>
+
+    <delete id="delSDrug" parameterType="list">
+        delete from sdrug where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueSDrug" parameterType="int" resultMap="queSD">
+    select * from sdrug where id=#{id}
+    </select>
+    <update id="xiuSDrug" parameterType="SDrug">
+        update sdrug
+        <set>
+            <if test="supId>0">supId=#{supId},</if>
+            <if test="drugId>0">drugId=#{drugId},</if>
+            <if test="num>=0">num=#{num},</if>
+            <if test="combPrice>0">combPrice=#{combPrice}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllSDrugCount" parameterType="SDrug" resultType="int">
+        select count(*) from sdrug
+        inner join supplier sup on sup.id=sdrug.supId
+        inner join drug on drug.id=sdrug.drugId
+        where sdrug.num>0
+            <if test="drugNames!=null">and drug.drugNames like CONCAT('%',#{drugNames},'%')</if>
+            <if test="supName!=null">and sup.supName like CONCAT('%',#{supName},'%')</if>
+    </select>
+
+    <select id="queAllSDrug" parameterType="SDrug" resultMap="queSD">
+        select sdrug.* from sdrug
+        inner join supplier sup on sup.id=sdrug.supId
+        inner join drug on drug.id=sdrug.drugId
+        where sdrug.num>0
+        <if test="drugNames!=null">and drug.drugNames like CONCAT('%',#{drugNames},'%')</if>
+        <if test="supName!=null">and sup.supName like CONCAT('%',#{supName},'%')</if>
+    </select>
+
+    <resultMap id="queSD" type="com.hao.vo.SDrug">
+        <id column="drugId" property="drugId"></id>
+        <id column="supId" property="supId"></id>
+    <association property="drug" javaType="Drug"
+                 column="drugId" select="com.hao.dao.DrugDao.xiuBeforeQueDrug"
+                 fetchType="lazy">
+    </association>
+    <association property="sup" javaType="Supplier"
+                 column="supId" select="com.hao.dao.SupplierDao.xiuBeforeQueSupplier"
+                 fetchType="lazy">
+    </association>
+    </resultMap>
+</mapper>

@@ -1,0 +1,8 @@
+[
+  {"depart":"请选择","value":"暂无分配","selected":true},
+  {"depart":"董事","value":"董事"},
+  {"depart":"财务","value":"财务"},
+  {"depart":"仓库","value":"仓库"},
+  {"depart":"进货","value":"进货"},
+  {"depart":"销售","value":"销售"}
+]

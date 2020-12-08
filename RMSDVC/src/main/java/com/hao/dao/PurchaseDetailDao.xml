@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.PurchaseDetailDao">
+    <insert id="addPurchaseDetail" parameterType="PurchaseDetail">
+    insert purchasedetail values(null,#{supId},#{repQuantity},#{amount},#{remark},#{purId})
+    </insert>
+
+    <delete id="delPurchaseDetail" parameterType="list">
+        delete from purchasedetail where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQuePurchaseDetail" parameterType="int" resultType="PurchaseDetail">
+    select * from purchasedetail where id=#{id}
+    </select>
+
+    <select id="queryByRepIdPD" parameterType="int" resultMap="queRD">
+    select * from purchasedetail where purId=#{id}
+    </select>
+    <update id="xiuPurchaseDetail" parameterType="PurchaseDetail">
+        update purchasedetail
+        <set>
+            <if test="supId>0">supId=#{supId},</if>
+            <if test="repQuantity>0">repQuantity=#{repQuantity},</if>
+            <if test="amount>0">amount=#{amount},</if>
+            <if test="remark!=null">remark=#{remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllPurchaseDetailCount" parameterType="PurchaseDetail" resultType="int">
+        select count(*) from purchasedetail
+        <where>
+            <if test="purId>0">purId=#{purId}</if>
+        </where>
+    </select>
+
+    <select id="queAllPurchaseDetail" parameterType="PurchaseDetail" resultMap="queRD">
+        select * from purchasedetail
+    </select>
+
+    <resultMap id="queRD" type="PurchaseDetail">
+        <id column="supId" property="supId"></id>
+        <association property="sDrug" javaType="SDrug"
+                     column="supId" select="com.hao.dao.SDrugDao.xiuBeforeQueSDrug"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+</mapper>

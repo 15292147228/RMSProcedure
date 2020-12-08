@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.OrderFormDao">
+    <insert id="addOrderForm" parameterType="OrderForm" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert orderform values(null,#{userId},#{aggregate},now(),#{roleId},#{state})
+    </insert>
+
+    <delete id="delOrderForm" parameterType="list">
+        delete from orderform where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueOrderForm" parameterType="int" resultMap="queRD">
+    select * from orderform where id=#{id}
+    </select>
+    <update id="xiuOrderForm" parameterType="OrderForm">
+        update orderform
+        <set>
+            <if test="aggregate>0">aggregate=#{aggregate},</if>
+            <if test="userId>0">userId=#{userId},</if>
+            <if test="ofDate!=null">ofDate=#{ofDate},</if>
+            <if test="state>=0">state=#{state}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllOrderFormCount" parameterType="OrderForm" resultType="int">
+        select count(*) from orderform
+        where
+        aggregate>0
+        <if test="ofDate!=null"> and ofDate>=#{ofDate}</if>
+        <if test="state>=0"> and state=#{state}</if>
+    </select>
+
+    <select id="queAllOrderForm" parameterType="OrderForm" resultMap="queRD">
+        select * from orderform
+        where
+        aggregate>0
+        <if test="ofDate!=null"> and ofDate>=#{ofDate}</if>
+        <if test="state>=0"> and state=#{state}</if>
+        <if test="id>0"> and id=#{id}</if>
+    </select>
+
+    <resultMap id="queRD" type="OrderForm">
+        <id column="id" property="id"></id>
+        <id column="userId" property="userId"></id>
+        <association property="user" javaType="User"
+                     column="userId" select="com.hao.dao.UserDao.xiuBeforeQueUser"
+                     fetchType="lazy">
+        </association>
+        <collection property="ofDetail" javaType="list" ofType="OfDetail"
+                    column="id" select="com.hao.dao.OfDetailDao.queryByRepIdOFD"
+                    fetchType="lazy">
+        </collection>
+    </resultMap>
+</mapper>

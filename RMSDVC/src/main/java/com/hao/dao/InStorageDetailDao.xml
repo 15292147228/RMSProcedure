@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.InStorageDetailDao">
+    <insert id="addInStorageDetail" parameterType="InStorageDetail">
+        insert instoragedetail values(null,#{supId},#{repQuantity},#{amount},null,#{remark},#{instId})
+    </insert>
+
+    <delete id="delInStorageDetail" parameterType="list">
+        delete from instoragedetail where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueInStorageDetail" parameterType="int" resultMap="queRD">
+    select * from instoragedetail where id=#{id}
+    </select>
+
+    <select id="queryByRepIdINSD" parameterType="int" resultMap="queRD">
+    select * from instoragedetail where instId=#{id}
+    </select>
+    <update id="xiuInStorageDetail" parameterType="InStorageDetail">
+        update instoragedetail
+        <set>
+            <if test="supId>0">supId=#{supId},</if>
+            <if test="repQuantity>0">repQuantity=#{repQuantity},</if>
+            <if test="amount>0">amount=#{amount},</if>
+            <if test="reperId>0">reperId=#{reperId},</if>
+            <if test="remark!=null">remark=#{remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllInStorageDetailCount" parameterType="InStorageDetail" resultType="int">
+        select count(*) from instoragedetail
+        <where>
+            <if test="instId>0">instId=#{instId}</if>
+        </where>
+    </select>
+
+    <select id="queAllInStorageDetail" parameterType="InStorageDetail" resultMap="queRD">
+        select * from instoragedetail
+    </select>
+
+    <resultMap id="queRD" type="InStorageDetail">
+        <id column="supId" property="supId"></id>
+        <association property="sDrug" javaType="SDrug"
+                     column="supId" select="com.hao.dao.SDrugDao.xiuBeforeQueSDrug"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+</mapper>

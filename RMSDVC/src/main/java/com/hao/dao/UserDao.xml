@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.UserDao">
+    <insert id="addUser" parameterType="User">
+    insert user values(null,#{accNum},#{pwd},#{company},#{userName},#{duty},#{companySite}
+    ,#{userPhone},#{bankAccount},#{xinYu},#{destination},#{roleId})
+    </insert>
+
+    <delete id="delUser" parameterType="list">
+        delete from user where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueUser" parameterType="int" resultType="User">
+    select * from user where id=#{id}
+    </select>
+    <update id="xiuUser" parameterType="User">
+        update user
+        <set>
+            <if test="accNum!=null">accNum=#{accNum},</if>
+            <if test="pwd!=null">pwd=#{pwd},</if>
+            <if test="company!=null">company=#{company},</if>
+            <if test="userName!=null">userName=#{userName},</if>
+            <if test="duty!=null">duty=#{duty},</if>
+            <if test="companySite!=null">companySite=#{companySite},</if>
+            <if test="userPhone!=null">userPhone=#{userPhone},</if>
+            <if test="bankAccount!=null">bankAccount=#{bankAccount},</if>
+            <if test="xinYu>0">xinYu=#{xinYu},</if>
+            <if test="destination!=null">destination=#{destination},</if>
+            <if test="roleId>0">roleId=#{roleId}</if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="queAllUserCount" parameterType="User" resultType="int">
+        select count(*) from user
+        <where>
+            <if test="company!=null">and company like CONCAT('%',#{company},'%')</if>
+            <if test="userName!=null">and userName like CONCAT('%',#{userName},'%')</if>
+        </where>
+    </select>
+    <select id="queAllUser" parameterType="User" resultType="User">
+        select * from user
+        <where>
+            <if test="company!=null">and company like CONCAT('%',#{company},'%')</if>
+            <if test="userName!=null">and userName like CONCAT('%',#{userName},'%')</if>
+        </where>
+    </select>
+
+</mapper>

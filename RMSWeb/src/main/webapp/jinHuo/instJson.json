@@ -1,0 +1,3 @@
+[
+  {"state":-1,"text":"全部"},{"state":0,"text":"待入库","selected":true},{"state":1,"text":"拒绝入库"},{"state":2,"text":"成功入库"}
+]

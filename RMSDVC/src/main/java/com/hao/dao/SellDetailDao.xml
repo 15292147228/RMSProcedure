@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.SellDetailDao">
+    <insert id="addSellDetail" parameterType="SellDetail">
+insert selldetail values(null,#{reperId},#{count},#{amount},#{remark},#{sellId})
+    </insert>
+
+    <delete id="delSellDetail" parameterType="list">
+        delete from selldetail where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueSellDetail" parameterType="int" resultType="SellDetail">
+    select * from selldetail where id=#{id}
+    </select>
+
+    <select id="queryByRepIdSD" parameterType="int" resultMap="queRD">
+    select * from selldetail where sellId=#{id}
+    </select>
+    <update id="xiuSellDetail" parameterType="SellDetail">
+        update selldetail
+        <set>
+            <if test="reperId>0">reperId=#{reperId},</if>
+            <if test="count>0">count=#{count},</if>
+            <if test="amount>0">amount=#{amount},</if>
+            <if test="remark!=null">remark=#{remark}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllSellDetailCount" parameterType="SellDetail" resultType="int">
+        select count(*) from selldetail
+        <where>
+            <if test="sellId>0">sellId=#{sellId}</if>
+        </where>
+    </select>
+
+    <select id="queAllSellDetail" parameterType="SellDetail" resultMap="queRD">
+        select * from selldetail
+    </select>
+
+    <resultMap id="queRD" type="SellDetail">
+        <id column="reperId" property="reperId"></id>
+        <association property="rep" javaType="Repertory"
+                     column="reperId" select="com.hao.dao.RepertoryDao.xiuBeforeQueRepertory"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+</mapper>

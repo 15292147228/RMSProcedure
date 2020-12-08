@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.ReplenishDao">
+    <insert id="addReplenish" parameterType="Replenish" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert replenish values(null,#{aggregate},#{roleId},NOW(),#{state})
+    </insert>
+
+    <delete id="delReplenish" parameterType="list">
+        delete from replenish where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueReplenish" parameterType="int" resultMap="queRD">
+    select * from replenish where id=#{id}
+    </select>
+    <update id="xiuReplenish" parameterType="Replenish">
+        update replenish
+        <set>
+            <if test="aggregate>0">aggregate=#{aggregate},</if>
+            <if test="roleId>0">roleId=#{roleId},</if>
+            <if test="applyDate!=null">applyDate=#{applyDate},</if>
+            <if test="state>=0">state=#{state}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllReplenishCount" parameterType="Replenish" resultType="int">
+        select count(*) from replenish
+        where
+            aggregate>0
+            <if test="applyDate!=null"> and applyDate>=#{applyDate}</if>
+            <if test="state>=0"> and state=#{state}</if>
+    </select>
+
+    <select id="queAllReplenish" parameterType="Replenish" resultMap="queRD">
+        select * from replenish
+        where
+            aggregate>0
+            <if test="applyDate!=null"> and applyDate>=#{applyDate}</if>
+            <if test="state>=0"> and state=#{state}</if>
+            <if test="id>0"> and id=#{id}</if>
+    </select>
+
+    <resultMap id="queRD" type="Replenish">
+        <id column="id" property="id"></id>
+        <collection property="repDetail" javaType="list" ofType="ReplenishDetail"
+                     column="id" select="com.hao.dao.ReplenishDetailDao.queryByRepIdRD"
+                     fetchType="lazy">
+        </collection>
+        <!--<association property="sup" javaType="Supplier"
+                     column="supId" select="com.hao.dao.SupplierDao.xiuBeforeQueSupplier"
+                     fetchType="lazy">
+        </association>-->
+    </resultMap>
+</mapper>

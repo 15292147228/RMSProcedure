@@ -1,0 +1,3 @@
+[
+  {"state":-1,"text":"全部"},{"state":0,"text":"待审核","selected":true},{"state":1,"text":"作废"},{"state":2,"text":"已批准"}
+]

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.AndRoleDao">
+    <insert id="addAndRole" >
+        insert andRole values(null,#{auId},#{rId})
+    </insert>
+
+    <delete id="delAndRole" parameterType="int">
+        delete from andRole where roleId=#{rid}
+    </delete>
+
+    <select id="xiuBeforeAndRole" parameterType="int" resultType="AndRole">
+        select * from andRole where id=#{id}
+    </select>
+    <update id="xiuAndRole" parameterType="int">
+        update andRole set authId=#{authId},roleId=#{roleId}
+    </update>
+
+    <select id="queAllAndRole" resultType="AndRole">
+        select * from andRole
+    </select>
+</mapper>

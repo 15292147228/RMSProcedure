@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.WareHouseDao">
+    <insert id="addWareHouse" parameterType="WareHouse">
+    insert wareHouse values(null,#{wareName},#{wareAddress},#{saveState})
+    </insert>
+
+    <delete id="delWareHouse" parameterType="list">
+        delete from wareHouse where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueWareHouse" parameterType="int" resultType="WareHouse">
+    select * from wareHouse where id=#{id}
+    </select>
+    <update id="xiuWareHouse" parameterType="WareHouse">
+        update wareHouse
+        <set>
+            <if test="wareName!=null">wareName=#{wareName},</if>
+            <if test="wareAddress!=null">wareAddress=#{wareAddress},</if>
+            <if test="saveState>=0">saveState=#{saveState}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllWareHouseCount" parameterType="WareHouse" resultType="int">
+        select count(*) from wareHouse
+        <where>
+            <if test="wareName!=null">and wareName like CONCAT('%',#{wareName},'%')</if>
+            <if test="wareAddress!=null">and wareAddress like CONCAT('%',#{wareAddress},'%')</if>
+            <if test="saveState>=0">and saveState=#{saveState}</if>
+        </where>
+    </select>
+
+    <select id="queAllWareHouse" parameterType="WareHouse" resultType="WareHouse">
+        select * from wareHouse
+        <where>
+            <if test="wareName!=null">and wareName like CONCAT('%',#{wareName},'%')</if>
+            <if test="wareAddress!=null">and wareAddress like CONCAT('%',#{wareAddress},'%')</if>
+            <if test="saveState>=0">and saveState=#{saveState}</if>
+        </where>
+    </select>
+</mapper>

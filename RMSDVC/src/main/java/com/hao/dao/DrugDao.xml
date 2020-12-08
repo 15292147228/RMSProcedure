@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.DrugDao">
+    <insert id="addDrug" parameterType="Drug">
+           insert drug values(null,#{drugNames},#{purcost},#{sellPrince},#{ingredient},
+           #{specification},#{place},#{batchNum},#{remark},#{producedDate},#{expirationDate},#{packageInsert})
+    </insert>
+    <delete id="delDrug" parameterType="list">
+        delete from drug where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueDrug" parameterType="int" resultType="Drug">
+    select * from drug where id=#{id}
+    </select>
+    <update id="xiuDrug" parameterType="Drug">
+        update drug
+        <set>
+            <if test="drugNames!=null">drugNames=#{drugNames},</if>
+            <if test="purcost>0">purcost=#{purcost},</if>
+            <if test="sellPrince>0">sellPrince=#{sellPrince},</if>
+            <if test="ingredient!=null">ingredient=#{ingredient},</if>
+            <if test="specification!=null">specification=#{specification},</if>
+            <if test="place!=null">place=#{place},</if>
+            <if test="batchNum!=null">batchNum=#{batchNum},</if>
+            <if test="remark!=null">remark=#{remark},</if>
+            <if test="producedDate!=null">producedDate=#{producedDate},</if>
+            <if test="expirationDate!=null">expirationDate=#{expirationDate},</if>
+            <if test="packageInsert!=null">packageInsert=#{packageInsert}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllDrugCount" parameterType="Drug" resultType="int">
+        select count(*) from drug
+        <where>
+            <if test="drugNames!=null">and drugNames like CONCAT('%',#{drugNames},'%')</if>
+            <if test="purcost!=null">and purcost>=#{purcost}</if>
+            <if test="sellPrince!=null">and sellPrince>=#{sellPrince}</if>
+        </where>
+    </select>
+
+    <select id="queAllDrug" parameterType="Drug" resultType="Drug">
+        select * from drug
+        <where>
+            <if test="drugNames!=null">and drugNames like CONCAT('%',#{drugNames},'%')</if>
+            <if test="purcost!=null">and purcost>=#{purcost}</if>
+            <if test="sellPrince!=null">and sellPrince>=#{sellPrince}</if>
+        </where>
+    </select>
+</mapper>

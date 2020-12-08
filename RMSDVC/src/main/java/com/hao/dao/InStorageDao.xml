@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hao.dao.InStorageDao">
+    <insert id="addInStorage" parameterType="InStorage" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert instorage values(null,#{aggregate},#{roleId},#{purId},null,#{state})
+    </insert>
+
+    <delete id="delInStorage" parameterType="list">
+        delete from instorage where id
+        <foreach collection="list" item="ids" open="in(" close=")" separator=",">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="xiuBeforeQueInStorage" parameterType="int" resultMap="queRD">
+    select * from instorage where id=#{id}
+    </select>
+    <update id="xiuInStorage" parameterType="InStorage">
+        update instorage
+        <set>
+            <if test="aggregate>0">aggregate=#{aggregate},</if>
+            <if test="roleId>0">roleId=#{roleId},</if>
+            <if test="purId>0">purId=#{purId},</if>
+            <if test="wareDate==null">wareDate=now(),</if>
+            <if test="state>=0">state=#{state}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queAllInStorageCount" parameterType="InStorage" resultType="int">
+        select count(*) from instorage
+        where
+        aggregate>0
+        <if test="wareDate!=null"> and wareDate>=#{wareDate}</if>
+        <if test="state>=0"> and state=#{state}</if>
+    </select>
+
+    <select id="queAllInStorage" parameterType="InStorage" resultMap="queRD">
+        select * from instorage
+        where
+        aggregate>0
+        <if test="wareDate!=null"> and wareDate>=#{wareDate}</if>
+        <if test="state>=0"> and state=#{state}</if>
+    </select>
+
+    <select id="queryByTimeOfIns" parameterType="int" resultType="InStorage">
+        <choose>
+            <when test="num==1">select * from instorage where period_diff(date_format(now(),'%y%m'),date_format(wareDate,'%y%m'))=1 and state=2</when>
+            <when test="num==2">select * from instorage where year(wareDate)=year(now()) and state=2</when>
+            <when test="num==3">select * from instorage where year(wareDate)=year(date_sub(now(),interval 1 year)) and state=2</when>
+            <otherwise>select * from instorage where date_format(wareDate,'%y%m') = date_format(curdate(),'%y%m') and state=2</otherwise>
+        </choose>
+    </select>
+    <select id="queryByTimeOfCount" parameterType="int" resultType="int">
+        <choose>
+            <when test="num==1">select count(*) from instorage where period_diff(date_format(now(),'%y%m'),date_format(wareDate,'%y%m'))=1 and state=2</when>
+            <when test="num==2">select count(*) from instorage where year(wareDate)=year(now()) and state=2</when>
+            <when test="num==3">select count(*) from instorage where year(wareDate)=year(date_sub(now(),interval 1 year)) and state=2</when>
+            <otherwise>select count(*) from instorage where date_format(wareDate,'%y%m') = date_format(curdate(),'%y%m') and state=2</otherwise>
+        </choose>
+    </select>
+    <select id="querySumOfMoney" parameterType="int" resultType="Float">
+        <choose>
+            <when test="num==1">select sum(aggregate) from instorage where period_diff(date_format(now(),'%y%m'),date_format(wareDate,'%y%m'))=1 and state=2</when>
+            <when test="num==2">select sum(aggregate) from instorage where year(wareDate)=year(now()) and state=2</when>
+            <when test="num==3">select sum(aggregate) from instorage where year(wareDate)=year(date_sub(now(),interval 1 year)) and state=2</when>
+            <otherwise>select sum(aggregate) from instorage where date_format(wareDate,'%y%m') = date_format(curdate(),'%y%m') and state=2</otherwise>
+        </choose>
+    </select>
+
+    <resultMap id="queRD" type="InStorage">
+        <id column="id" property="id"></id>
+        <collection property="insDetail" javaType="list" ofType="InStorageDetail"
+                    column="id" select="com.hao.dao.InStorageDetailDao.queryByRepIdINSD"
+                    fetchType="lazy">
+        </collection>
+        <!--<association property="sup" javaType="Supplier"
+                     column="supId" select="com.hao.dao.SupplierDao.xiuBeforeQueSupplier"
+                     fetchType="lazy">
+        </association>-->
+    </resultMap>
+</mapper>
